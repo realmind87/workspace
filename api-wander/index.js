@@ -27,22 +27,22 @@ app.use(session({
     cookie: { secure: false } // HTTPS를 사용하는 경우 true로 설정
 }));
 
-// development
-// if (process.env.NODE_ENV === 'development'){
-//     app.use(
-//       cors({
-//         origin: ["http://localhost:3000"],
-//         credentials: true,
-//       })
-//     );
-//   } else {
-//     app.use(
-//       cors({
-//         origin: ["http://blog.deepandeast.com", 'http://blog.deepandeast.synology.me'],
-//         credentials: true,
-//       })
-//     );
-// }
+development
+if (process.env.NODE_ENV === 'development'){
+    app.use(
+      cors({
+        origin: ["http://localhost:3000"],
+        credentials: true,
+      })
+    );
+  } else {
+    app.use(
+      cors({
+        origin: ["http://blog.deepandeast.com", 'http://blog.deepandeast.synology.me'],
+        credentials: true,
+      })
+    );
+}
 
 // 라우트 마운트
 app.use('/users', userRoutes);
