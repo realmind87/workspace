@@ -28,21 +28,21 @@ app.use(session({
 }));
 
 // development
-if (process.env.NODE_ENV === 'development'){
-    app.use(
-      cors({
-        origin: ["http://localhost:3000"],
-        credentials: true,
-      })
-    );
-  } else {
-    app.use(
-      cors({
-        origin: ["http://blog.deepandeast.com", 'http://blog.deepandeast.synology.me'],
-        credentials: true,
-      })
-    );
-}
+// if (process.env.NODE_ENV === 'development'){
+//     app.use(
+//       cors({
+//         origin: ["http://localhost:3000"],
+//         credentials: true,
+//       })
+//     );
+//   } else {
+//     app.use(
+//       cors({
+//         origin: ["http://blog.deepandeast.com", 'http://blog.deepandeast.synology.me'],
+//         credentials: true,
+//       })
+//     );
+// }
 
 // 라우트 마운트
 app.use('/users', userRoutes);
