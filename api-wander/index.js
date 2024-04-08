@@ -27,7 +27,6 @@ app.use(session({
     cookie: { secure: false } // HTTPS를 사용하는 경우 true로 설정
 }));
 
-development
 if (process.env.NODE_ENV === 'development'){
     app.use(
       cors({
