@@ -1,0 +1,66 @@
+.toast {
+    position: fixed;
+    bottom: -100px;
+    left: 0;
+    right: 0;
+    margin: auto;
+    padding: 10px 20px;
+    border-radius: 5px;
+    width: 400px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+    &.info {
+        background-color: $color-info;
+    }
+
+    &.success {
+        background-color: $color-success;
+    }
+
+    &.warning {
+        background-color: $color-warning;
+    }
+
+    &.error {
+        background-color: $color-danger;
+    }
+    
+    &.open {
+        animation-name: fadeIn;
+        animation-duration: .5s;
+        animation-fill-mode: forwards; /* 애니메이션이 끝난 상태를 유지 */
+    }
+
+    &.close {
+        animation-name: fadeOut;
+        animation-duration: .5s;
+        animation-fill-mode: backwards; /* 애니메이션이 끝난 상태를 유지 */
+    }
+    
+    p {
+        color: #fff;
+        font-size: $font-size-sm;
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        bottom: -100px;
+    }
+    to {
+        bottom: 10px;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        bottom: 10px;
+    }
+    to {
+        bottom: -100px;
+    }
+}

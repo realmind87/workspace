@@ -1,0 +1,89 @@
+
+
+.header {
+    display: flex;
+    gap: 0 20px;
+    align-items: center;
+    height: 64px;
+    padding: 0 24px;
+    border-bottom: 1px solid #d7d7d7;
+
+    &__inner {
+        display: flex;
+        gap: 0 20px;
+        align-items: center;
+        justify-content: space-between;
+        height: 64px;
+        width: 1024px;
+        margin: 0 auto;
+    }
+    
+    .logo {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 32px;
+        height: 32px;
+        font-size: $font-size-base;
+        border-radius: 100%;
+        color: #fff;
+        font-weight: $font-bold;
+        background-color: #FF6154;
+    }
+
+    .user-area {
+        position: relative;
+        margin-left: auto;
+
+        .btn-user {
+            width: 32px;
+            height: 32px;
+            border-radius: 100%;
+            overflow: hidden;
+        }
+        
+        .user-info {
+
+            width: 200px;
+            position: absolute;
+            top: 40px;
+            right: 0px;
+            padding: 20px 15px;
+            border-radius: 10px;
+            background-color: #fff;
+            border:1px solid #efefef;
+            box-shadow: $box-shadow;
+            z-index: 100;
+
+            ul {
+                li {
+                    display: flex;
+                    align-items: center;
+                    gap: 0 10px;
+                    margin-bottom: 20px;
+                    
+                    strong {
+                        &.user-name {
+                            font-size: $font-size-base;
+                        }
+
+                        font-weight: $font-bold;
+                        font-size: $font-size-sm;
+                    }
+
+                    .num {
+                        font-size: $font-size-base;
+                        color: #999;
+                    }
+                }
+                
+            }
+
+            .btn-login {
+                width: 100%;
+                height: 40px;
+            }
+        }
+    }
+
+}
