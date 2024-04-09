@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
-import Cookies from 'js-cookie';
+import { Cookies } from 'react-cookie'
 
 interface Auth {
     session: any;
 }
+
+const cookies = new Cookies()
   
 export const useAuth = (): Auth => {
-    const [session, setSession] = useState<any>({user: null, token: null})
-    
+    const [session, setSession] = useState<any>({session: null})
+
     useEffect(() => {
-        const user = Cookies.get('user');
-        const token = Cookies.get('token');
-        if (token){
-            setSession({ ...session, user, token })
+        const session = JSON.stringify(cookies.get('connect.sid'))
+
+        console.log(session)
+
+        if (session){
+            setSession({ session })
         }
 
     }, []);

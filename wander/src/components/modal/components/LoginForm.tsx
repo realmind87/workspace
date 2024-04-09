@@ -1,5 +1,9 @@
-import { ChangeEventHandler, FormEventHandler, useState } from "react";
+import { ChangeEventHandler, FormEventHandler, useEffect, useRef, useState } from "react";
+import { useMutation } from '@tanstack/react-query';
 import { Link } from "react-router-dom";
+import { login } from '../../../api/auth'
+import { useApp } from "../../../hooks/useApp"
+import { useMutations } from "../../../hooks/useMutations"
 
 interface FormProps {
     setOpen?:  React.Dispatch<React.SetStateAction<boolean>>;
@@ -7,10 +11,21 @@ interface FormProps {
 }
 
 const Form: React.FC<FormProps> = ({setOpen}) => {
+    
+    const app = useApp()
+    const mutation = useMutations()
+    
+    const userRef = useRef<HTMLInputElement>(null);
+    const passwordRef = useRef<HTMLInputElement>(null);
 
     const [formData, setFormData] = useState({
-        userID: "", 
+        username: "",
         password: ""
+    })
+
+    const [stus, setStus] = useState({
+        code: '',
+        message: ''
     })
     
     const handleInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
@@ -20,12 +35,26 @@ const Form: React.FC<FormProps> = ({setOpen}) => {
 
     const handleSubmit: FormEventHandler<HTMLFormElement> = (e, ) => {
         e.preventDefault();
-        
-        // const userID = e.currentTarget.userID.value
-        // const password = e.currentTarget.password.value
+
+        const {username, password} = formData;
+
+        if(username.length === 0) {
+            userRef.current?.focus();
+            setStus({ code: 'NO_USER', message: '아이디를 입력해 주세요' })
+            return 
+        }
+
+        if (password.length === 0) {
+            passwordRef.current?.focus();
+            setStus({ code: 'NO_PASSWORD', message: '비밀번호를 입력해 주세요' })
+            return
+        }
+
+        mutation.loginMutations.mutate(formData)
 
         setOpen?.(false)
     }
+
     
     return (
         <form onSubmit={handleSubmit}>
@@ -35,21 +64,25 @@ const Form: React.FC<FormProps> = ({setOpen}) => {
                     <ul>
                         <li>
                             <input 
+                                ref={userRef}
                                 type="text"
-                                name="userID"
+                                name="username"
+                                className={`${stus.code === 'NO_USER' ? 'wran' : ''}`}
                                 placeholder='아이디를 입력해주세요' 
                                 onChange={handleInputChange}
                             />
-                            {/* <p className="txt-warn">{resData.message}</p> */}
+                            {stus.code === 'NO_USER' && <p className="txt-warn">{stus.message}</p>}
                         </li>
                         <li>
                             <input
+                                ref={passwordRef}
                                 type="password"
-                                name="password" 
-                                className='wran' 
+                                name="password"
+                                className={`${stus.code === 'NO_PASSWORD' ? 'wran' : ''}`}
                                 placeholder='비밀번호를 입력해주세요'
                                 onChange={handleInputChange}
                             />
+                            {stus.code === 'NO_PASSWORD' && <p className="txt-warn">{stus.message}</p>}
                         </li>
                     </ul>
                 </div>

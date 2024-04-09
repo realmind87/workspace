@@ -40,10 +40,9 @@ router.post('/login', async (req, res) => {
     const user = users.find(user => user.username === username);
     
     if (!user) {
-        console.log('Login error')
-        return res.status(500).json({user: null, code: 4000, message: '가입 되어 있지 않습니다.'});
+        return res.status(500).json({code: 'NOT_USER', message: '가입 되어 있지 않습니다.'});
     }
-    
+
     try {
         // 비밀번호 비교
         if (await bcrypt.compare(password, user.password)) {
@@ -52,7 +51,7 @@ router.post('/login', async (req, res) => {
             req.session.user = { username: user.username };
 
             // JWT 생성
-            const token = jwt.sign({ username: user.username }, 'your_jwt_secret', { expiresIn: '1h' });
+            const token = jwt.sign({username: user.username}, 'your_jwt_secret', { expiresIn: '1h' });
 
             // 쿠키에 JWT 저장
             res.cookie('token', token, {
@@ -60,32 +59,39 @@ router.post('/login', async (req, res) => {
                 secure: true, // HTTPS를 사용할 때만 쿠키 전송
                 sameSite: 'strict' // CSRF 공격 방지
             });
-                
-            res.json({user, message: 'Success', token}); // 로그인 성공 응답
+
+            const _user = { username: user.username, avatar: user.avatarPath }
+            
+            res.json({message: 'success', uesr: _user, token}); // 로그인 성공 응답
+
         } else {
             res.send('Not Allowed'); // 비밀번호 불일치
         }
     } catch {
-        res.status(500).send();
+        res.status(500).send("");
     }
 })
 
 router.post('/logout', async (req, res) => {
-    const { username } = req.body;
+    const { auth, user } = req.body;
     
-    const token = req.headers['authorization'];
+    const token = auth;
+    const username = user.username
+
 
     // 토큰 없음
     if (!token) {
         return res.status(401).send('Access denied. No token provided.');
     }
-    
+
     try {
         // 토큰 검증
         const decoded = jwt.verify(token, 'your_jwt_secret');
+        
 
         // 사용자 찾기
         const user = users.find(user => user.username === username);
+
 
         if (!user) {
             return res.status(400).send('Cannot find user.');
@@ -97,11 +103,11 @@ router.post('/logout', async (req, res) => {
         }
 
         // 비밀번호 검증
-        const validPassword = await bcrypt.compare(password, user.password);
+        //const validPassword = await bcrypt.compare(password, user.password);
 
-        if (!validPassword) {
-            return res.status(400).send('Invalid password.');
-        }
+        // if (!validPassword) {
+        //     return res.status(400).send('Invalid password.');
+        // }
 
         // 사용자 삭제
         const index = users.findIndex(u => u.username === username);
@@ -124,15 +130,11 @@ router.post('/register', async (req, res, next) => {
     // 중복 사용자
     const existingUser = users.find(user => user.username === username )
     if (existingUser) {
-        console.log('가입된 회원이 있습니다.')
-        return res.send({code: 400, error: 'user_exist', message: '가입된 회원이 있습니다.'})
+        return res.status(400).json({code: 'USER_EXIST', message: '가입된 회원이 있습니다.'});
     }
-
+    
     // 비밀번호 해싱
     try {
-
-        console.log(username, password)
-
         const saltRounds = 10; // 비밀번호 해싱의 복잡도 설정
         const hashedPassword = await bcrypt.hash(password, saltRounds); // 비밀번호 해싱
         

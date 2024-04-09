@@ -1,54 +1,59 @@
-"use client"
 
 import { useState, ChangeEvent, useRef, ChangeEventHandler, FormEventHandler, FormEvent } from 'react';
 import { CgProfile } from "react-icons/cg";
 import { IoMdArrowBack } from "react-icons/io";
 import { Link, useNavigate } from 'react-router-dom';
 import { register, login } from '../../api/auth'
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import type {UserInfo} from '../../api/types'
+import { useApp } from "../../hooks/useApp"
+import { useMutations } from "../../hooks/useMutations"
 
 export default function SignUp() {
+    const queryClient = useQueryClient();
+    const app = useApp()
+    const mutation = useMutations()
 
     const navigation = useNavigate()
 
-    const mutation = useMutation({
-        mutationFn: register,
-        onError: (error, variables) => {
-            console.log('onError====')
-            console.log(error)
-        },
-        onSuccess: (data, variables) => {
+    // const mutation = useMutation({
+    //     mutationFn: register,
+    //     onError: (error, variables) => {
+    //         app.setToast({ state: 'error', msg: error.message })
+    //     },
+    //     onSuccess: (data, variables) => {
+    //         const { username, password } = variables
 
-            console.log('onSuccess====')
-            console.log(data)
-            console.log(variables)
+    //         console.log(username, password)
 
-            const { username, password } = variables
+    //         login({username, password})
 
-            try {
-                login({username, password}).then((res) => {
-                    alert('등록 되었습니다')
-                    navigation("/")
-                })
-            } catch (error) {
-                console.log(error)
-            }
+    //         queryClient.setQueryData(['user'], {username, password});
+
+    //         // try {
+    //         //     await login({username, password})
+
+    //         //     app.setToast({ state: 'success', msg: '등록 되었습니다' })
+    //         //         navigation("/")
+    //         // } catch (error) {
+    //         //     console.log(error)
+    //         // }
+    //     },
+    //     onSettled: async (data, error, variables) => {
             
-        },
-        onSettled: (data, error, variables) => {
-            console.log('onSettled====')
-            console.log(variables)
-            console.log(error)
-            // Error or success... doesn't matter!
-        },
-    })
+    //     },
+    // })
     
     const [formData, setFormData] = useState<UserInfo>({
         avatar: "",
         username: "", 
         password: "",
         passwordCompleted: ""
+    })
+
+    const [stus, setStus] = useState({
+        code: '',
+        message: ''
     })
 
     const userRef = useRef<HTMLInputElement>(null);
@@ -76,7 +81,52 @@ export default function SignUp() {
     
     const onSubmitHandler: FormEventHandler<HTMLFormElement> = (e) => {
         e.preventDefault();
-        mutation.mutate(formData);
+
+        const {username, password, passwordCompleted} = formData;
+
+        // 유저네임 유효성 검사를 위한 정규 표현식: 영문자로 시작하고 최소 8자 이상
+        const usernameRegex = /^[A-Za-z][A-Za-z0-9]{7,}$/;
+
+        // 비밀번호 유효성 검사를 위한 정규 표현식
+        const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&^])[A-Za-z\d@$!%*?&^]{8,}$/;
+
+        if (username.length === 0) {
+            setStus({ code: 'NO_USER', message: '아이디를 입력해주세요' })
+            userRef.current?.focus();
+            return
+        }
+    
+        if (!usernameRegex.test(username)) {
+            setStus({ code: 'USER_ERROR', message: '아이디 양식에 맞지 않습니다.' })
+            userRef.current?.focus();
+            return
+        }
+    
+        if (password.length === 0) {
+            setStus({ code: 'NO_PASSWORD', message: '비밀번호 입력해주세요' })
+            passwordRef.current?.focus();
+            return
+        }
+    
+        if (!passwordRegex.test(password)) {
+            setStus({ code: 'PASSWORD_ERROR', message: '비밀번호 양식에 맞지 않습니다.' })
+            passwordRef.current?.focus();
+            return
+        }
+
+        if (passwordCompleted.length === 0) {
+            setStus({ code: 'NO_PASSWORD_COMPLETED', message: '비밀번호 확인을 입력해주세요' })
+            passwordCheckRef.current?.focus();
+            return
+        }
+        
+        if (password !== passwordCompleted) {
+            setStus({ code: 'NOT_PASSWORD_COMPLETED', message: '비밀번호를 다시 확인해 주세요' })
+            passwordCheckRef.current?.focus();
+            return
+        }
+        
+        mutation.registerMutations.mutate(formData);
     }
 
     return (
@@ -102,7 +152,7 @@ export default function SignUp() {
                                         id="avatar" 
                                         type="file"
                                         name="avatar"
-                                        accept="image/*" 
+                                        accept="image/*"
                                         onChange={handleImageChange}
                                     />
                                 </div>
@@ -112,34 +162,33 @@ export default function SignUp() {
                                     ref={userRef}
                                     type="text"
                                     name='username'
-                                    className="wran"
+                                    className={`${(stus.code === 'NO_USER' || stus.code === 'USER_ERROR') ? 'wran' : '' }`}
                                     placeholder="영문, 숫자 포함 8자 이상 입력해주세요"
                                     onChange={handleInputChange}
                                 />
-                                {/* <p className="txt-helper wran">D</p> */}
-                                
+                                {(stus.code === 'NO_USER' || stus.code === 'USER_ERROR') && <p className="txt-helper wran">{stus.message}</p>}
                             </li>
                             <li>
                                 <input
                                     ref={passwordRef}
                                     type="password"
                                     name="password"
+                                    className={`${(stus.code === 'NO_PASSWORD' || stus.code === 'PASSWORD_ERROR') ? 'wran' : '' }`}
                                     placeholder="영문 대문자, 숫자, 특수문자 포함 8자 이상 입력해주세요"
                                     onChange={handleInputChange}
                                 />
-                                {/* {<p className="txt-helper wran">{message}</p>} */}
+                                {(stus.code === 'NO_PASSWORD' || stus.code === 'PASSWORD_ERROR') && <p className="txt-helper wran">{stus.message}</p>}
                             </li>
                             <li>
                                 <input
                                     ref={passwordCheckRef}
                                     type="password"
                                     name="passwordCompleted"
-                                    className="wran"
+                                    className={`${(stus.code === 'NO_PASSWORD_COMPLETED' || stus.code === 'NOT_PASSWORD_COMPLETED') ? 'wran' : '' }`}
                                     placeholder="비밀번호 다시 입력해주세요"
                                     onChange={handleInputChange}
-                                    
                                 />
-                                
+                                {(stus.code === 'NO_PASSWORD_COMPLETED' || stus.code === 'NOT_PASSWORD_COMPLETED') && <p className="txt-helper wran">{stus.message}</p>}
                             </li>
                         </ul>
                     </div>

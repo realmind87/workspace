@@ -1,10 +1,11 @@
 
 import Router from './router'
-import RQproviders from './components/Provider/RQproviders'
+import RQproviders from './components/provider/RQproviders'
 import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
 import { useEffect } from 'react';
 import {getPosts} from './api/posts'
-import { AppProvider } from './components/Provider/AppProvider';
+import { AppProvider } from './components/provider/AppProvider';
+import { CookiesProvider } from 'react-cookie';
 
 function App() {
 
@@ -28,11 +29,13 @@ function App() {
 
   return (
       <RQproviders>
-        <AppProvider>
-          <HydrationBoundary state={dehydratedState}>
-            <Router />
-          </HydrationBoundary>
-        </AppProvider>
+        <CookiesProvider>
+          <AppProvider>
+            <HydrationBoundary state={dehydratedState}>
+              <Router />
+            </HydrationBoundary>
+          </AppProvider>
+        </CookiesProvider>
       </RQproviders>
   );
 }
