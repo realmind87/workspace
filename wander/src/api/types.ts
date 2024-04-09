@@ -1,12 +1,14 @@
 
 
 export type UserInfo = {
-    username: string;
-    password: string;
-    passwordCompleted: string;
+    avatar: File | string,
+    username: string, 
+    password: string,
+    passwordCompleted: string
 }
 
 export type Credentials = {
+    avatar?: File | string
     username: string;
     password: string;
 }

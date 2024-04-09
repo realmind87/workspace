@@ -36,8 +36,8 @@ const upload = multer({ storage: storage, fileFilter: fileFilter })
 
 // 로그인 라우트
 router.post('/login', async (req, res) => {
-    const { userID, password } = req.body;
-    const user = users.find(user => user.userID === userID);
+    const { username, password } = req.body;
+    const user = users.find(user => user.username === username);
     
     if (!user) {
         console.log('Login error')
@@ -60,7 +60,7 @@ router.post('/login', async (req, res) => {
                 secure: true, // HTTPS를 사용할 때만 쿠키 전송
                 sameSite: 'strict' // CSRF 공격 방지
             });
-            
+                
             res.json({user, message: 'Success', token}); // 로그인 성공 응답
         } else {
             res.send('Not Allowed'); // 비밀번호 불일치
@@ -70,14 +70,59 @@ router.post('/login', async (req, res) => {
     }
 })
 
+router.post('/logout', async (req, res) => {
+    const { username } = req.body;
+    
+    const token = req.headers['authorization'];
+
+    // 토큰 없음
+    if (!token) {
+        return res.status(401).send('Access denied. No token provided.');
+    }
+    
+    try {
+        // 토큰 검증
+        const decoded = jwt.verify(token, 'your_jwt_secret');
+
+        // 사용자 찾기
+        const user = users.find(user => user.username === username);
+
+        if (!user) {
+            return res.status(400).send('Cannot find user.');
+        }
+
+        // 로그인한 사용자와 삭제 요청한 사용자가 동일한지 확인
+        if (decoded.username !== user.username) {
+            return res.status(401).send('Unauthorized request.');
+        }
+
+        // 비밀번호 검증
+        const validPassword = await bcrypt.compare(password, user.password);
+
+        if (!validPassword) {
+            return res.status(400).send('Invalid password.');
+        }
+
+        // 사용자 삭제
+        const index = users.findIndex(u => u.username === username);
+        users.splice(index, 1);
+
+        res.send('User deleted successfully.');
+
+    } catch(error) {
+         // 토큰 검증 실패
+        res.status(400).send('Invalid token.');
+    }
+})
+
 // 회원가입
 router.post('/register', async (req, res, next) => {
-    const { userID, password } = req.body;
+    const { username, password } = req.body;
     // const avatarPath = req.file ? req.file.path : '';
     // const type = req.file ? 'uploads' : 'none'
     
     // 중복 사용자
-    const existingUser = users.find(user => user.userID === userID )
+    const existingUser = users.find(user => user.username === username )
     if (existingUser) {
         console.log('가입된 회원이 있습니다.')
         return res.send({code: 400, error: 'user_exist', message: '가입된 회원이 있습니다.'})
@@ -86,17 +131,17 @@ router.post('/register', async (req, res, next) => {
     // 비밀번호 해싱
     try {
 
-        console.log(userID, password)
+        console.log(username, password)
 
         const saltRounds = 10; // 비밀번호 해싱의 복잡도 설정
         const hashedPassword = await bcrypt.hash(password, saltRounds); // 비밀번호 해싱
         
         // 사용자 저장
-        const newUser = {userID, password: hashedPassword};
+        const newUser = {username, password: hashedPassword};
          
         users.push(newUser);
 
-        res.status(201).send(`User ${userID} registered successfully`);
+        res.status(201).send(`User ${username} registered successfully`);
         
     } catch (error) {
         res.status(500).send('Server error.');

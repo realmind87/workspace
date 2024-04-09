@@ -1,11 +1,55 @@
 "use client"
 
-import React, { useState, ChangeEvent, useRef } from 'react';
+import { useState, ChangeEvent, useRef, ChangeEventHandler, FormEventHandler, FormEvent } from 'react';
 import { CgProfile } from "react-icons/cg";
 import { IoMdArrowBack } from "react-icons/io";
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { register, login } from '../../api/auth'
+import { useMutation } from '@tanstack/react-query';
+import type {UserInfo} from '../../api/types'
 
 export default function SignUp() {
+
+    const navigation = useNavigate()
+
+    const mutation = useMutation({
+        mutationFn: register,
+        onError: (error, variables) => {
+            console.log('onError====')
+            console.log(error)
+        },
+        onSuccess: (data, variables) => {
+
+            console.log('onSuccess====')
+            console.log(data)
+            console.log(variables)
+
+            const { username, password } = variables
+
+            try {
+                login({username, password}).then((res) => {
+                    alert('등록 되었습니다')
+                    navigation("/")
+                })
+            } catch (error) {
+                console.log(error)
+            }
+            
+        },
+        onSettled: (data, error, variables) => {
+            console.log('onSettled====')
+            console.log(variables)
+            console.log(error)
+            // Error or success... doesn't matter!
+        },
+    })
+    
+    const [formData, setFormData] = useState<UserInfo>({
+        avatar: "",
+        username: "", 
+        password: "",
+        passwordCompleted: ""
+    })
 
     const userRef = useRef<HTMLInputElement>(null);
     const passwordRef = useRef<HTMLInputElement>(null);
@@ -17,14 +61,22 @@ export default function SignUp() {
         const files = e.target.files;
         if (files && files[0] && files[0].type.startsWith('image/')) {
             const file = files[0];
+            setFormData({ ...formData, avatar: file})
             setPreview(URL.createObjectURL(file));
         } else {
             setPreview(null);
+            setFormData({ ...formData, avatar: ""})
         }
     };
+
+    const handleInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+        const { name, value } = e.target;
+        setFormData({ ...formData, [name]: value });
+    };
     
-    const onSubmitHandler = () => {
-        console.log('d')
+    const onSubmitHandler: FormEventHandler<HTMLFormElement> = (e) => {
+        e.preventDefault();
+        mutation.mutate(formData);
     }
 
     return (
@@ -41,22 +93,28 @@ export default function SignUp() {
                                 <div className='img-avatar'>
                                     <label className='img-label' htmlFor='avatar'>
                                         {preview ? (
-                                            <div>dd</div>
-                                            // <image  alt="Preview" />
+                                            <img src={preview}  alt="Preview" />
                                         ) : (
                                             <CgProfile size={80} color='#ccc'/>
                                         )}
                                     </label>
-                                    <input id="avatar" type="file" name="avatar" accept="image/*" onChange={handleImageChange}/>
+                                    <input 
+                                        id="avatar" 
+                                        type="file"
+                                        name="avatar"
+                                        accept="image/*" 
+                                        onChange={handleImageChange}
+                                    />
                                 </div>
                             </li>
                             <li>
                                 <input
                                     ref={userRef}
                                     type="text"
-                                    name='userID'
+                                    name='username'
                                     className="wran"
                                     placeholder="영문, 숫자 포함 8자 이상 입력해주세요"
+                                    onChange={handleInputChange}
                                 />
                                 {/* <p className="txt-helper wran">D</p> */}
                                 
@@ -67,6 +125,7 @@ export default function SignUp() {
                                     type="password"
                                     name="password"
                                     placeholder="영문 대문자, 숫자, 특수문자 포함 8자 이상 입력해주세요"
+                                    onChange={handleInputChange}
                                 />
                                 {/* {<p className="txt-helper wran">{message}</p>} */}
                             </li>
@@ -74,9 +133,11 @@ export default function SignUp() {
                                 <input
                                     ref={passwordCheckRef}
                                     type="password"
-                                    name="passwordCheck"
+                                    name="passwordCompleted"
                                     className="wran"
-                                    placeholder="비밀번호 다시 입력해주세요" 
+                                    placeholder="비밀번호 다시 입력해주세요"
+                                    onChange={handleInputChange}
+                                    
                                 />
                                 
                             </li>
