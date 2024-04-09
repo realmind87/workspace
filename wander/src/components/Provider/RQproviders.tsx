@@ -1,5 +1,3 @@
-'use client'
-
 import { QueryClient, QueryClientProvider} from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
@@ -18,10 +16,14 @@ export default function Providers({ children } : { children : React.ReactNode })
             },
         })
     );
+
+    const dehydratedState = dehydrate(client)
     
     return (
         <QueryClientProvider client={client}>
-            {children}
+            <HydrationBoundary state={dehydratedState}>
+                {children}
+            </HydrationBoundary>
             <ReactQueryDevtools initialIsOpen={process.env.NEXT_PUBLIC_MODE === 'local'} />
         </QueryClientProvider>
     )

@@ -31,9 +31,7 @@ function App() {
       <RQproviders>
         <CookiesProvider>
           <AppProvider>
-            <HydrationBoundary state={dehydratedState}>
               <Router />
-            </HydrationBoundary>
           </AppProvider>
         </CookiesProvider>
       </RQproviders>
