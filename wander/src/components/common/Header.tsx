@@ -12,9 +12,7 @@ const Header = () => {
     const { session } = useAuth();
 
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-
     
-
     const onLogin = () => {
         setIsModalOpen(true)
     }
