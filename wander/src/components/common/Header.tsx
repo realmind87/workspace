@@ -4,26 +4,39 @@ import Modal from '../modal'
 import LoginForm from '../modal/components/LoginForm';
 import {useApp} from 'hooks/useApp'
 import UserInfo from './menu/UserInfo';
+import { useParams, useNavigate } from 'react-router-dom';
+import { IoArrowBackSharp } from 'react-icons/io5';
 
 const Header = () => {
     //const { session } = useApp()
+    const navigate = useNavigate()
+    const params = useParams();
+    const { id } = params;
     const {cookies, userInfo} = useApp();
-
     const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     
     const onLogin = () => {
         setIsModalOpen(true)
     }
 
-    useEffect(() => {
-        console.log('session', userInfo)
-    }, [userInfo])
+   
 
     return (
         <header className="header">
             <div className='header__inner'>
-                <h1 className='logo'>W</h1>
-                
+                {id 
+                    ? (
+                        <Button
+                            type="button"
+                            text="뒤로가기"
+                            icon={<IoArrowBackSharp size={32} color="#000" />}
+                            onHandler={() => navigate('/')}
+                        />
+                    ) : (
+                        <h1 className='logo'>W</h1>
+                    )
+                }
+
                 {!userInfo ? (
                     <div className='login-area'>
                         <Button

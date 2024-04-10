@@ -47,9 +47,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [cookies, setCookie, removeCookie] = useCookies(['auth', 'user']);
     const [toast, setToast] = useState<ToastProps | null>(null)
-
-    console.log(cookies)
-
+    
     useEffect(() => {
         const cookie = cookies;
         setUserInfo(cookie.user);

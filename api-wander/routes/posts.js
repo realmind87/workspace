@@ -101,8 +101,15 @@ const posts = [
 ];
 
 router.get('/', async (req, res, ) => {
+
+    const filteredPosts = posts.filter(post => post.title.includes(req.query.q));
+    
     try {
-        res.json(posts); // 로그인 성공 응답
+        if (req.query.q === 'null') {
+            res.json(posts);
+        } else {
+            res.json(filteredPosts);
+        }
     } catch (e) {
         console.error(e)
         res.send('Not Allowed');

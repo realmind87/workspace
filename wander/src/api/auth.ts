@@ -48,7 +48,6 @@ export const login = async (credentials: Credentials) => {
 };
 
 export const logOut = async (session : any) => {
-  console.log(session)
   const response = await fetch(`${config}/users/logout`, {
     method: 'POST',
     headers: {

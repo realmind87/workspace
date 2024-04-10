@@ -1,31 +1,31 @@
 import { useQuery } from "@tanstack/react-query";
-import {PostProps} from './types'
 import {getPosts} from 'api/posts'
 import { Link } from "react-router-dom";
 import { BsPersonCircle } from "react-icons/bs";
 import { GoCommentDiscussion } from "react-icons/go";
-
+import { useSearchParams } from 'react-router-dom';
 import dayjs from "dayjs";
 import relativeTime from "dayjs/plugin/relativeTime";
 import ko from "dayjs/locale/ko";
-
 import config from '../../config'
 
 dayjs.extend(relativeTime);
 dayjs.locale(ko);
 
 const Component = () => {
-
-    const { data, isLoading } = useQuery<PostProps[]>({
-        queryKey: ['posts'],
+    const [query] = useSearchParams();
+    const searchParams: any = query.get('q');
+    const { data, isLoading } = useQuery({
+        queryKey: ['posts', searchParams],
         queryFn: getPosts,
         staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
-        gcTime: 300 * 1000,
+        gcTime: 300 * 1000
     })
     
     return (
         <div className="post">
             <div className="post__content">
+
                 {isLoading && (
                     <div className="post__item skeleton-loading">
                         <div className="post__thum"></div>
@@ -42,10 +42,11 @@ const Component = () => {
                     </div>
                 )}
                 
-                {data && 
-                    data?.map((post, index) => {
-                        return (
-                            <div className="post__item" key={index}>
+                {data && data.length > 0 
+                    ? (
+                        data?.map((post, index) => {
+                            return (
+                                <div className="post__item" key={index}>
                                 <div className="post__thum">
                                     <Link to={`${post.User.userID}/status/${post.postId}`}>
                                         {
@@ -56,7 +57,7 @@ const Component = () => {
                                     </Link>
                                 </div>
                                 <dl>
-                                    <dt><Link to={`${post.User.userID}/status/${post.postId}`}>{post.title}</Link></dt>
+                                    <dt><Link to={`/content/${post.postId}`}>{post.title}</Link></dt>
                                     <dd>
                                         <ul className="d-list">
                                             <li>
@@ -88,9 +89,25 @@ const Component = () => {
                                     <IoIosHeartEmpty size={18} color="#e2757a" />
                                     <span className="like-number">{post.Hearts.length}</span>
                                 </button> */}
-                            </div>
-                        )    
-                    })
+                                </div>
+                            )    
+                        })
+                    ) : <>
+                        {searchParams 
+                            ? (
+                                <p className='txt-noSearch'>
+                                    <strong className='txt-word'>{`"${searchParams}"`}</strong>
+                                    에 관련된 검색결과가 없습니다.
+                                    <Link to="/" type="button" className='btn-link'>다시 불러오기</Link>
+                                </p>
+                            ) : (
+                                <p className='txt-noSearch'>
+                                    리스트가 없습니다.
+                                    <Link to="/" type="button" className='btn-link'>다시 불러오기</Link>
+                                </p>
+                            )
+                        }
+                    </>
                 }
             </div>
         </div>

@@ -2,6 +2,10 @@ interface UserID {
     userId: string,
 }
 
+export type SearchParamsProps = {
+    q: string;
+}
+
 export interface PostProps {
     postId: number;
     User: any;

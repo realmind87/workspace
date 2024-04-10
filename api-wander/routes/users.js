@@ -73,52 +73,27 @@ router.post('/login', async (req, res) => {
 })
 
 router.post('/logout', async (req, res) => {
-    const { auth, user } = req.body;
-    
+    const { auth } = req.body;
     const token = auth;
-    const username = user.username
-
-
+    
     // 토큰 없음
     if (!token) {
         return res.status(401).send('Access denied. No token provided.');
     }
 
-    try {
-        // 토큰 검증
-        const decoded = jwt.verify(token, 'your_jwt_secret');
-        
+    res.clearCookie('token');
 
-        // 사용자 찾기
-        const user = users.find(user => user.username === username);
-
-
-        if (!user) {
-            return res.status(400).send('Cannot find user.');
-        }
-
-        // 로그인한 사용자와 삭제 요청한 사용자가 동일한지 확인
-        if (decoded.username !== user.username) {
-            return res.status(401).send('Unauthorized request.');
-        }
-
-        // 비밀번호 검증
-        //const validPassword = await bcrypt.compare(password, user.password);
-
-        // if (!validPassword) {
-        //     return res.status(400).send('Invalid password.');
-        // }
-
-        // 사용자 삭제
-        const index = users.findIndex(u => u.username === username);
-        users.splice(index, 1);
-
-        res.send('User deleted successfully.');
-
-    } catch(error) {
-         // 토큰 검증 실패
-        res.status(400).send('Invalid token.');
+    if (req.session) {
+        req.session.destroy((err) => {
+            if(err) {
+                return res.status(500).send('세션 삭제 중 오류가 발생했습니다.');
+            }
+            res.send('로그아웃 되었습니다.');
+        });
+    } else {
+        res.send('로그아웃 되었습니다.');
     }
+
 })
 
 // 회원가입

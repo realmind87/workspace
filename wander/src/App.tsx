@@ -8,25 +8,7 @@ import { AppProvider } from './components/provider/AppProvider';
 import { CookiesProvider } from 'react-cookie';
 
 function App() {
-
-  const queryClient = new QueryClient()
-  const dehydratedState = dehydrate(queryClient)
-
-  const fecthPosts = async () => {
-    try {
-      await queryClient.prefetchQuery({
-          queryKey: ['posts'],
-          queryFn: getPosts,
-      })
-    } catch(error) {
-      console.error(error)
-    }
-  }
   
-  useEffect(() => {
-    fecthPosts();
-  }, [])
-
   return (
       <RQproviders>
         <CookiesProvider>
