@@ -118,7 +118,7 @@ router.post('/register', upload.single('avatar'), async (req, res, next) => {
          
         users.push(newUser);
 
-        res.status(201).send(`User ${__dirname} registered successfully`);
+        res.status(201).send(`User ${avatarPath} registered successfully`);
         
     } catch (error) {
         res.status(500).send('Server error.');
