@@ -117,8 +117,8 @@ router.post('/register', upload.single('avatar'), async (req, res, next) => {
         const newUser = {username, avatar: avatarPath, password: hashedPassword, type};
          
         users.push(newUser);
-
-        res.status(201).send(`User ${username} registered successfully`);
+        
+        res.status(201).send(`User ${__dirname} registered successfully`);
         
     } catch (error) {
         res.status(500).send('Server error.');
