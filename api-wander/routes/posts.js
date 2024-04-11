@@ -156,15 +156,15 @@ router.get('/content/:id', async (req, res, ) => {
 router.post('/', async (req, res) => {
     const { userInfo, title, content } = req.body;    
     const postImagePath = req.file ? req.file.path : faker.image.urlLoremFlickr();
-    const type = req.file ? 'uploads' : 'faker'
-    const { username, avatar } = userInfo;
+    const imgType = req.file ? 'uploads' : 'faker'
+    const { username, avatar, type } = userInfo;
 
     const newPost = {
         postId: posts.length + 1,
-        User: { username, avatar },
+        User: { username, avatar, type },
         title,
         content,
-        Images: [{imageId: 1, link: postImagePath, type}],
+        Images: [{imageId: 1, link: postImagePath, imgType}],
         Hearts: [],
         Comments: [],
         createdAt: generateDate(),
