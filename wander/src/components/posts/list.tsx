@@ -50,7 +50,7 @@ const Component = () => {
                             return (
                                 <div className="post__item" key={index}>
                                 <div className="post__thum">
-                                    <Link to={`${post.User.username}/status/${post.postId}`}>
+                                    <Link to={`/content/${post.postId}`}>
                                         {
                                             post.Images[0].postType === 'uploads'
                                                 ? <img src={`${config}/${post.Images[0].link}`} width={80} height={80} alt='' />
