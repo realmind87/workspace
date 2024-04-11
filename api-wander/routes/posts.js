@@ -17,7 +17,7 @@ const generateDate = () => {
 // Multer 설정: 이미지 저장 위치와 파일명 정의
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'uploads/'); // 파일이 저장될 경로
+        cb(null, './uploads/'); // 파일이 저장될 경로
     },
     filename: function(req, file, cb) {
         // 파일명 설정: fieldname + timestamp + file extension

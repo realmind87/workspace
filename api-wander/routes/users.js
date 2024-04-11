@@ -12,7 +12,7 @@ const users = [];
 // Multer 설정: 이미지 저장 위치와 파일명 정의
 const storage = multer.diskStorage({
     destination: function(req, file, cb) {
-        cb(null, 'uploads/'); // 파일이 저장될 경로
+        cb(null, './uploads/'); // 파일이 저장될 경로
     },
     filename: function(req, file, cb) {
         // 파일명 설정: fieldname + timestamp + file extension
@@ -117,7 +117,7 @@ router.post('/register', upload.single('avatar'), async (req, res, next) => {
         const newUser = {username, avatar: avatarPath, password: hashedPassword, type};
          
         users.push(newUser);
-        
+
         res.status(201).send(`User ${__dirname} registered successfully`);
         
     } catch (error) {
