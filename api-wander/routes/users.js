@@ -60,7 +60,7 @@ router.post('/login', async (req, res) => {
                 sameSite: 'strict' // CSRF 공격 방지
             });
 
-            const _user = { username: user.username, avatar: user.avatar }
+            const _user = { username: user.username, avatar: user.avatar, type: user.type }
             
             res.json({message: 'success', uesr: _user, token}); // 로그인 성공 응답
 
@@ -118,7 +118,7 @@ router.post('/register', upload.single('avatar'), async (req, res, next) => {
          
         users.push(newUser);
 
-        res.status(201).send(`User ${avatarPath} registered successfully`);
+        res.status(201).json (`User ${avatarPath} registered successfully`);
         
     } catch (error) {
         res.status(500).send('Server error.');
