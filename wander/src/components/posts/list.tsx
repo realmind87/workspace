@@ -19,8 +19,10 @@ const Component = () => {
         queryKey: ['posts', searchParams],
         queryFn: getPosts,
         staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
-        gcTime: 300 * 1000
+        gcTime: 300 * 1000,
     })
+
+    console.log(data)
     
     return (
         <div className="post">
@@ -48,7 +50,7 @@ const Component = () => {
                             return (
                                 <div className="post__item" key={index}>
                                 <div className="post__thum">
-                                    <Link to={`${post.User.userID}/status/${post.postId}`}>
+                                    <Link to={`${post.User.username}/status/${post.postId}`}>
                                         {
                                             post.Images[0].type === 'uploads'
                                                 ? <img src={`${config}/${post.Images[0].link}`} width={80} height={80} alt='' />
@@ -62,12 +64,12 @@ const Component = () => {
                                         <ul className="d-list">
                                             <li>
                                                 {
-                                                    post.User.image ? (
+                                                    post.User.avatar.length > 0 ? (
                                                         <div className="user-img">
                                                             {
                                                                 post.User.type === 'uploads' 
-                                                                    ? <img src={`${config}/${post.User.image}`} width={16} height={16} alt='' />
-                                                                    : <img src={`${post.User.image}`} width={16} height={16} alt='' />
+                                                                    ? <img src={`${config}/${post.User.avatar}`} width={16} height={16} alt='' />
+                                                                    : <img src={`${post.User.avatar}`} width={16} height={16} alt='' />
                                                             }
                                                             
                                                         </div>
@@ -75,7 +77,7 @@ const Component = () => {
                                                         <BsPersonCircle size={16} color="#dfdfdf" />
                                                     )
                                                 }
-                                                {post.User.userID}
+                                                {post.User.username}
                                             </li>
                                             <li>
                                                 <GoCommentDiscussion size={12} />

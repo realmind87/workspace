@@ -39,7 +39,7 @@ const UserInfo = ({session}: any) => {
             <button type="button" className='btn-user' onClick={() => setIsVisible(!isVisible)}>
                 {app.userInfo?.avatar?.length !== 0 
                     ? <img 
-                        src={`${config}/${session?.avatar}`} 
+                        src={`${config}/${app.userInfo?.avatar}`} 
                         width={32} 
                         height={32}
                         alt="프로필 이미지" 

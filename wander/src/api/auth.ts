@@ -6,15 +6,12 @@ import cookie from 'cookie'
 
 const cookies = new Cookies();
 
-export const register = async (userInfo: UserInfo) => {
+export const register = async (formData: FormData) => {
 
     try {
       const response = await fetch(`${config}/users/register`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userInfo)
+        body: formData
       });
       
       if (!response.ok) {

@@ -1,7 +1,9 @@
 import { login, logOut, register } from '../api/auth'
+import { createPost } from '../api/posts'
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApp } from './useApp'
 import { Link, useNavigate } from 'react-router-dom';
+import { PostProps } from 'api/types';
 
 export const useMutations = () => {
     const app = useApp();
@@ -40,9 +42,10 @@ export const useMutations = () => {
         onError: (error, variables) => {
             app.setToast({ state: 'error', msg: error.message })
         },
-        onSuccess: async (data, variables) => {
-            const { username, password } = variables
-
+        onSuccess: (data, variables : FormData) => {
+            const username = variables.get('username') as string
+            const password = variables.get('password') as string
+            
             loginMutations.mutate({username, password})
             
             navigation("/")
@@ -52,5 +55,23 @@ export const useMutations = () => {
         },
     })
 
-    return { registerMutations, loginMutations, logoutMutation };
+    const postMutations = useMutation({
+        mutationFn: createPost,
+        onError: (error, variables) => {
+            app.setToast({ state: 'error', msg: error.message })
+        },
+        onSuccess: async (data, variables) => {
+            if (queryClient.getQueryData(['posts'])) {
+                queryClient.setQueryData(['posts'], (old : PostProps[]) => [...old, data])
+            }
+            queryClient.invalidateQueries({queryKey: ['posts']});
+            app.setPostModal?.(false)
+            app.setToast({ state: 'success', msg: '등록되었습니다.' })
+        },
+        onSettled: async (data, error, variables) => {
+            
+        },
+    })
+
+    return { registerMutations, loginMutations, logoutMutation, postMutations };
 };

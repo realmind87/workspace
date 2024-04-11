@@ -22,6 +22,8 @@ type AuthState = {
     userInfo: UserInfo | null;
     setCookie: any;
     removeCookie: any;
+    postModal: Boolean,
+    setPostModal: React.Dispatch<React.SetStateAction<Boolean>> | null,
     toast: ToastProps | null,
     setToast: React.Dispatch<React.SetStateAction<ToastProps | null>>,
 }
@@ -32,6 +34,8 @@ const initialState: AuthState = {
     userInfo: null,
     setCookie: null,
     removeCookie: null,
+    postModal: false,
+    setPostModal: null,
     toast: null,
     setToast: null!
 }
@@ -47,6 +51,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
     const [cookies, setCookie, removeCookie] = useCookies(['auth', 'user']);
     const [toast, setToast] = useState<ToastProps | null>(null)
+    const [postModal, setPostModal] = useState<Boolean>(false)
     
     useEffect(() => {
         const cookie = cookies;
@@ -54,7 +59,7 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     }, [cookies])
     
     return (
-        <AppContext.Provider value={{cookies, userInfo, setCookie, removeCookie, toast, setToast}}>
+        <AppContext.Provider value={{cookies, userInfo, setCookie, removeCookie, postModal, setPostModal, toast, setToast}}>
             {children}
             {toast && <Toast state={toast.state} msg={toast.msg} />}
         </AppContext.Provider>

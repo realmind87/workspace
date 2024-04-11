@@ -64,6 +64,9 @@ export default function SignUp() {
     
     const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
+
+        console.log(files)
+
         if (files && files[0] && files[0].type.startsWith('image/')) {
             const file = files[0];
             setFormData({ ...formData, avatar: file})
@@ -82,7 +85,15 @@ export default function SignUp() {
     const onSubmitHandler: FormEventHandler<HTMLFormElement> = (e) => {
         e.preventDefault();
 
-        const {username, password, passwordCompleted} = formData;
+        const _formData = new FormData()
+        const {avatar, username, password, passwordCompleted} = formData;
+        _formData.append('avatar', avatar);
+        _formData.append('username', username);
+        _formData.append('password', password);
+        _formData.append('passwordCompleted', passwordCompleted);
+
+
+        
 
         // 유저네임 유효성 검사를 위한 정규 표현식: 영문자로 시작하고 최소 8자 이상
         const usernameRegex = /^[A-Za-z][A-Za-z0-9]{7,}$/;
@@ -126,7 +137,7 @@ export default function SignUp() {
             return
         }
         
-        mutation.registerMutations.mutate(formData);
+        mutation.registerMutations.mutate(_formData);
     }
 
     return (

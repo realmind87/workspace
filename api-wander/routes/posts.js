@@ -39,9 +39,9 @@ const fileFilter = (req, file, cb) => {
 const upload = multer({ storage: storage, fileFilter: fileFilter })
 
 const users = [
-    {userID: 'elonmusk', image: faker.image.avatar(), type: 'faker'},
-    {userID: 'zerohch0', image: faker.image.avatar(), type: 'faker'},
-    {userID: 'leoturtle', image: faker.image.avatar(), type: 'faker'},
+    {username: 'elonmusk', avatar: faker.image.avatar(), type: 'faker'},
+    {username: 'zerohch0', avatar: faker.image.avatar(), type: 'faker'},
+    {username: 'leoturtle', avatar: faker.image.avatar(), type: 'faker'},
 ]
 
 // const url = new URL(req.url)
@@ -153,20 +153,17 @@ router.get('/content/:id', async (req, res, ) => {
     }
 })
 
-router.post('/', upload.single('postImage'), async (req, res) => {
-    const { userName, userImage, tit, con } = req.body;    
+router.post('/', async (req, res) => {
+    const { userInfo, title, content } = req.body;    
     const postImagePath = req.file ? req.file.path : faker.image.urlLoremFlickr();
     const type = req.file ? 'uploads' : 'faker'
-
-    console.log('=======================================')
-    console.log(req.body)
-    console.log('=======================================')
+    const { username, avatar } = userInfo;
 
     const newPost = {
         postId: posts.length + 1,
-        User: { userID: userName, image: userImage, type: 'uploads'},
-        title: tit,
-        content: con,
+        User: { username, avatar },
+        title,
+        content,
         Images: [{imageId: 1, link: postImagePath, type}],
         Hearts: [],
         Comments: [],
@@ -176,7 +173,17 @@ router.post('/', upload.single('postImage'), async (req, res) => {
     posts.unshift(newPost)
 
     try {
-        res.json(newPost); // 로그인 성공 응답
+        res.json(posts); // 로그인 성공 응답
+    } catch (e) {
+        console.error(e)
+        res.send('Not Allowed');
+    }
+})
+
+router.post('/upload', upload.single('imageFile'), async (req, res) => {
+    const postImagePath = req.file ? req.file.path : faker.image.urlLoremFlickr();
+    try {
+        res.json({imageFile: postImagePath}); // 로그인 성공 응답
     } catch (e) {
         console.error(e)
         res.send('Not Allowed');

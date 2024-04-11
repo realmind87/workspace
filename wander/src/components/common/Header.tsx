@@ -18,9 +18,7 @@ const Header = () => {
     const onLogin = () => {
         setIsModalOpen(true)
     }
-
-   
-
+    
     return (
         <header className="header">
             <div className='header__inner'>

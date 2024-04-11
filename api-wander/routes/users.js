@@ -38,7 +38,7 @@ const upload = multer({ storage: storage, fileFilter: fileFilter })
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
     const user = users.find(user => user.username === username);
-    
+
     if (!user) {
         return res.status(500).json({code: 'NOT_USER', message: '가입 되어 있지 않습니다.'});
     }
@@ -60,7 +60,7 @@ router.post('/login', async (req, res) => {
                 sameSite: 'strict' // CSRF 공격 방지
             });
 
-            const _user = { username: user.username, avatar: user.avatarPath }
+            const _user = { username: user.username, avatar: user.avatar }
             
             res.json({message: 'success', uesr: _user, token}); // 로그인 성공 응답
 
@@ -97,10 +97,10 @@ router.post('/logout', async (req, res) => {
 })
 
 // 회원가입
-router.post('/register', async (req, res, next) => {
+router.post('/register', upload.single('avatar'), async (req, res, next) => {
     const { username, password } = req.body;
-    // const avatarPath = req.file ? req.file.path : '';
-    // const type = req.file ? 'uploads' : 'none'
+    const avatarPath = req.file ? req.file.path : '';
+    const type = req.file ? 'uploads' : 'none'
     
     // 중복 사용자
     const existingUser = users.find(user => user.username === username )
@@ -114,7 +114,7 @@ router.post('/register', async (req, res, next) => {
         const hashedPassword = await bcrypt.hash(password, saltRounds); // 비밀번호 해싱
         
         // 사용자 저장
-        const newUser = {username, password: hashedPassword};
+        const newUser = {username, avatar: avatarPath, password: hashedPassword, type};
          
         users.push(newUser);
 

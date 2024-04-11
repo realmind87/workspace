@@ -6,11 +6,12 @@ import { BsPersonCircle } from 'react-icons/bs';
 import config from '../../config';
 import { useParams } from 'react-router-dom';
 
+import { Viewer } from '@toast-ui/react-editor';
+import '@toast-ui/editor/dist/toastui-editor-viewer.css';
+
 const Component = () => {
     const params = useParams();
     const {id} = params
-
-    console.log(id)
     
     const { data, isLoading } = useQuery({
         queryKey: ['content', id],
@@ -35,19 +36,19 @@ const Component = () => {
                                 ) : (
                                     <>
                                         <button type="button" className='btn-user'>
-                                            {data?.User.image?.length !== 0 
+                                            {data?.User.avatar?.length !== 0 
                                                 ? <>
                                                     {   
                                                         data?.User.type === 'uploads'
-                                                            ? <img src={`${config}/${data?.User.image}`} width={32} height={32} alt="프로필 이미지" />
-                                                            : <img src={`${data?.User.image}`} width={32} height={32} alt="프로필 이미지" />
+                                                            ? <img src={`${config}/${data?.User.avatar}`} width={32} height={32} alt="프로필 이미지" />
+                                                            : <img src={`${data?.User.avatar}`} width={32} height={32} alt="프로필 이미지" />
                                                         
                                                     }
                                                 </> 
                                                 : <BsPersonCircle size={32} color="#dfdfdf" />
                                             }
                                         </button>
-                                        <p>{data?.User.userID}</p>
+                                        <p>{data?.User.username}</p>
                                     </>
                                 )}
                             </div>
@@ -56,11 +57,16 @@ const Component = () => {
                             {isLoading ? <h1 className='skeleton-loading'></h1> : <h1>{data?.title}</h1>}
                         </header>
                         <article className="detail__content">
-                            {isLoading ? <>
+                            {isLoading 
+                            ? <>
                                 <p className='skeleton-loading'></p>
                                 <p className='skeleton-loading'></p>
                                 <p className='skeleton-loading'></p>
-                            </> : <p>{data?.content}</p>}
+                            </> : (
+                                <Viewer 
+                                    initialValue={data?.content}
+                                />
+                            )}
                         </article>
                     </article>
                 </section>

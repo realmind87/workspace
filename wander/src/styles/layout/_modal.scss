@@ -26,4 +26,16 @@
     background-color: #fff;
     padding: 20px 40px;
     border-radius: 10px;
+
+    &.full {
+        border-radius: 0px;
+        width: 1000px;
+        height: 100%;
+    }
+
+    .window-control {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+    }
 }

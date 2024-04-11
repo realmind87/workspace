@@ -2,6 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useApp } from "../../../hooks/useApp";
 import RecentSearch from "./RecentSearch";
 import RecentPosts from './RecentPosts';
+import PostForm from '../../../components/form/PostForm';
 
 const Aside = () => {
 
@@ -19,7 +20,7 @@ const Aside = () => {
     
     return (
         <aside>
-            {/* {userInfo && <PostForm />} */}
+            {userInfo && <PostForm />}
             <RecentSearch />
             {userInfo && (
                 <dl className="follow-terms">

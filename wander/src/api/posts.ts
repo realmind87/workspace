@@ -4,9 +4,7 @@ import { PostProps } from './types'
 
 export const getPosts: QueryFunction<PostProps[], [_1: string, searchParams: string]> = async ({ queryKey }) => {
     const [_1, searchParams] = queryKey;
-    
-    console.log(searchParams)
-    
+
     try {
         const response = await fetch(`${config}/posts?q=${searchParams}`, {
             cache: 'no-store'
@@ -62,3 +60,25 @@ export const getSinglePost = async ({ queryKey } : any) => {
         throw e; // Ensure you rethrow errors for react-query to handle them.
     }
 }
+
+
+export const createPost = async (formData: any) => {
+    
+    try {
+        const response = await fetch(`${config}/posts`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+      
+        const data = await response.json();
+
+        return data;
+    } catch (error) {
+        console.error(error)
+    }
+};
