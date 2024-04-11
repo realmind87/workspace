@@ -47,6 +47,8 @@ const users = [
 // const url = new URL(req.url)
 // const cursor = parseInt(url.searchParams.get('cursor')) || 0
 
+const postImages = []
+
 const posts = [
     {
         postId: 1,
@@ -155,16 +157,16 @@ router.get('/content/:id', async (req, res, ) => {
 
 router.post('/', async (req, res) => {
     const { userInfo, title, content } = req.body;    
-    const postImagePath = req.file ? req.file.path : faker.image.urlLoremFlickr();
-    const imgType = req.file ? 'uploads' : 'faker'
     const { username, avatar, type } = userInfo;
+
+    console.log(postImages)
 
     const newPost = {
         postId: posts.length + 1,
         User: { username, avatar, type },
         title,
         content,
-        Images: [{imageId: 1, link: postImagePath, imgType}],
+        Images: [...postImages],
         Hearts: [],
         Comments: [],
         createdAt: generateDate(),
@@ -172,8 +174,11 @@ router.post('/', async (req, res) => {
 
     posts.unshift(newPost)
 
+    console.log(posts)
+
     try {
         res.json(posts); // 로그인 성공 응답
+        postImages.splice(0);
     } catch (e) {
         console.error(e)
         res.send('Not Allowed');
@@ -182,6 +187,9 @@ router.post('/', async (req, res) => {
 
 router.post('/upload', upload.single('imageFile'), async (req, res) => {
     const postImagePath = req.file ? req.file.path : faker.image.urlLoremFlickr();
+
+    postImages.push({imageId: postImages.length + 1, link: postImagePath, postType: 'uploads'})
+
     try {
         res.json({imageFile: postImagePath}); // 로그인 성공 응답
     } catch (e) {

@@ -52,7 +52,7 @@ const Component = () => {
                                 <div className="post__thum">
                                     <Link to={`${post.User.username}/status/${post.postId}`}>
                                         {
-                                            post.Images[0].type === 'uploads'
+                                            post.Images[0].postType === 'uploads'
                                                 ? <img src={`${config}/${post.Images[0].link}`} width={80} height={80} alt='' />
                                                 : <img src={`${post.Images[0].link}`} width={80} height={80} alt='' />
                                         }
