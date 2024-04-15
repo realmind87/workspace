@@ -18,6 +18,13 @@ export type Credentials = {
     password: string;
 }
 
+export type CommentsProps = {
+    commentId: number,
+    postId: number,
+    userInfo: string,
+    content: string,
+    createdAt: Date
+}
 
 export interface PostProps {
     postId: number;
@@ -27,12 +34,7 @@ export interface PostProps {
     createdAt: Date;
     Images: any,
     Hearts: UserID[],
-    Comments: UserID[],
-    _count: {
-        Hearts: number,
-        Reposts: number,
-        Comments: number,
-    }
+    Comments: CommentsProps[]
 }
 
 

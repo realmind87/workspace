@@ -158,9 +158,7 @@ router.get('/content/:id', async (req, res, ) => {
 router.post('/', async (req, res) => {
     const { userInfo, title, content } = req.body;    
     const { username, avatar, type } = userInfo;
-
-    console.log(postImages)
-
+    
     const newPost = {
         postId: posts.length + 1,
         User: { username, avatar, type },
@@ -173,8 +171,6 @@ router.post('/', async (req, res) => {
     }
 
     posts.unshift(newPost)
-
-    console.log(posts)
 
     try {
         res.json(posts); // 로그인 성공 응답
@@ -192,6 +188,37 @@ router.post('/upload', upload.single('imageFile'), async (req, res) => {
 
     try {
         res.json({imageFile: postImagePath}); // 로그인 성공 응답
+    } catch (e) {
+        console.error(e)
+        res.send('Not Allowed');
+    }
+})
+
+router.post('/comment', async (req, res) => {
+    const {postId, userInfo, content} = req.body
+
+    const comment = {
+        commentId: postId+Date.now(),
+        postId, 
+        userInfo, 
+        content, 
+        createdAt: generateDate()
+    }
+
+    const filterPost = posts.find(post => post.postId === postId)
+
+    filterPost.Comments.push(comment)
+
+    //console.log(filterPost)
+
+    const _posts = posts.map((post) => {
+        return post.id === postId ? {...post, ...filterPost} : post
+    })
+
+    //console.log(_posts)
+    
+    try {
+        res.json(_posts); // 로그인 성공 응답
     } catch (e) {
         console.error(e)
         res.send('Not Allowed');

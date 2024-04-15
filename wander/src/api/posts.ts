@@ -40,7 +40,6 @@ export const getAsidePosts = async () => {
     }
 }
 
-
 export const getSinglePost = async ({ queryKey } : any) => {
     const [_1, id] = queryKey;
     
@@ -61,11 +60,33 @@ export const getSinglePost = async ({ queryKey } : any) => {
     }
 }
 
-
 export const createPost = async (formData: any) => {
     
     try {
         const response = await fetch(`${config}/posts`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(formData)
+        });
+        
+        if (!response.ok) {
+          throw new Error('Failed to fetch data');
+        }
+      
+        const data = await response.json();
+
+        return data;
+    } catch (error) {
+        console.error(error)
+    }
+};
+
+export const createComment = async (formData: any) => {
+
+    //console.log(formData)
+    
+    try {
+        const response = await fetch(`${config}/posts/comment`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(formData)

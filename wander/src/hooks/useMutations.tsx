@@ -1,5 +1,5 @@
 import { login, logOut, register } from '../api/auth'
-import { createPost } from '../api/posts'
+import { createPost, createComment } from '../api/posts'
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useApp } from './useApp'
 import { Link, useNavigate } from 'react-router-dom';
@@ -73,5 +73,23 @@ export const useMutations = () => {
         },
     })
 
-    return { registerMutations, loginMutations, logoutMutation, postMutations };
+    const commentMutations = useMutation({
+        mutationFn: createComment,
+        onError: (error, variables) => {
+            app.setToast({ state: 'error', msg: error.message })
+        },
+        onSuccess: async (data, variables) => {
+            //console.log(data)
+            if (queryClient.getQueryData(['posts'])) {
+                queryClient.setQueryData(['posts'], (old : PostProps[]) => [...old, ...data])
+            }
+            queryClient.invalidateQueries({queryKey: ['content']});
+            app.setToast({ state: 'success', msg: '등록되었습니다.' })
+        },
+        onSettled: async (data, error, variables) => {
+            
+        },
+    })
+
+    return { registerMutations, loginMutations, logoutMutation, postMutations, commentMutations };
 };

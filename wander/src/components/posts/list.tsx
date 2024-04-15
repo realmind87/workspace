@@ -21,8 +21,6 @@ const Component = () => {
         staleTime: 60 * 1000, // fresh -> stale, 5분이라는 기준
         gcTime: 300 * 1000,
     })
-
-    console.log(data)
     
     return (
         <div className="post">
@@ -49,15 +47,17 @@ const Component = () => {
                         data?.map((post, index) => {
                             return (
                                 <div className="post__item" key={index}>
-                                <div className="post__thum">
-                                    <Link to={`/content/${post.postId}`}>
-                                        {
-                                            post.Images[0].postType === 'uploads'
-                                                ? <img src={`${config}/${post.Images[0].link}`} width={80} height={80} alt='' />
-                                                : <img src={`${post.Images[0].link}`} width={80} height={80} alt='' />
-                                        }
-                                    </Link>
-                                </div>
+                                {post.Images.legnth > 0 &&
+                                    <div className="post__thum">
+                                        <Link to={`/content/${post.postId}`}>
+                                            {
+                                                post.Images[0].postType === 'uploads'
+                                                    ? <img src={`${config}/${post.Images[0].link}`} width={80} height={80} alt='' />
+                                                    : <img src={`${post.Images[0].link}`} width={80} height={80} alt='' />
+                                            }
+                                        </Link>
+                                    </div>
+                                }
                                 <dl>
                                     <dt><Link to={`/content/${post.postId}`}>{post.title}</Link></dt>
                                     <dd>

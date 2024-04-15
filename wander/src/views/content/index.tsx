@@ -9,6 +9,8 @@ import { useParams } from 'react-router-dom';
 import { Viewer } from '@toast-ui/react-editor';
 import '@toast-ui/editor/dist/toastui-editor-viewer.css';
 
+import Comment from '../../components/comment'
+
 const Component = () => {
     const params = useParams();
     const {id} = params
@@ -68,6 +70,7 @@ const Component = () => {
                                 />
                             )}
                         </article>
+                        {data &&  <Comment post={data}/>}
                     </article>
                 </section>
                 <Aside />

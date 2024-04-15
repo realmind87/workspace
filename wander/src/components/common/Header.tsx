@@ -12,11 +12,10 @@ const Header = () => {
     const navigate = useNavigate()
     const params = useParams();
     const { id } = params;
-    const {cookies, userInfo} = useApp();
-    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+    const {cookies, userInfo, loginModal, setLoginModal} = useApp();
     
     const onLogin = () => {
-        setIsModalOpen(true)
+        setLoginModal?.(true)
     }
     
     return (
@@ -43,7 +42,7 @@ const Header = () => {
                             text="로그인"
                             onHandler={onLogin}
                         />
-                        <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+                        <Modal isOpen={loginModal} onClose={() => setLoginModal?.(false)}>
                             <LoginForm />
                         </Modal>
                     </div>

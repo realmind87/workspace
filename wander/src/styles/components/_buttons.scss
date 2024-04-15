@@ -1,8 +1,21 @@
 /* 로그인 버튼 */
 
 
+button {
+    cursor: pointer;
+}
+
 .tnb-buttons {
     margin-left: auto;
+}
+
+.btn {
+    padding: 16px;
+    border-radius: 4px;
+    font-size: $font-size-sm;
+    border: 1px solid #d9e1ec;
+    font-weight: $font-medium;
+    color: #000;
 }
 
 .btn-login {

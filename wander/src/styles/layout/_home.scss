@@ -427,7 +427,6 @@ aside {
 }
 
 .detail {
-
     &__userInfo {
         display: flex;
         align-items: center;
@@ -488,6 +487,7 @@ aside {
 
     &__content {
         margin-top: 30px;
+        min-height: 300px;
 
         p {
             margin-bottom: 10px;
