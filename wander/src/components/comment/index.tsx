@@ -29,13 +29,8 @@ const Component = ({post}: any) => {
 
     const onComment : FormEventHandler<HTMLFormElement> = (e) => {
         e.preventDefault();
-
         mutation.commentMutations.mutate({postId: post.postId, userInfo, content})
     }
-
-    useEffect(() => {
-        console.log(post)
-    }, [post])
 
     return (
         <div className="comment__warp">

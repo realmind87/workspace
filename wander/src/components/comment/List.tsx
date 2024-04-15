@@ -24,11 +24,11 @@ const Component = ({comments}: any) => {
                             <div className="comment__user">
                                 {comment.userInfo && comment.userInfo?.avatar.length > 0 
                                     ? <img 
-                                        src={`${config}/${userInfo?.avatar}`} 
+                                        src={`${config}/${comment.userInfo?.avatar}`} 
                                         width={32} 
                                         height={32}
                                         alt="프로필 이미지" 
-                                    /> 
+                                    />
                                     : <BsPersonCircle size={32} color="#dfdfdf" />
                                 }
                                 <span className="comment__username">{ comment.userInfo.username }</span>
